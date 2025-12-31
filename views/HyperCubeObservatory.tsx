@@ -217,7 +217,6 @@ const HyperCubeObservatory: React.FC = () => {
     controls.enableDamping = true;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5;
-    // IMMERSIVE CONTROLS: No zoom, no pan to maintain infinite void illusion
     controls.enableZoom = false;
     controls.enablePan = false;
 
