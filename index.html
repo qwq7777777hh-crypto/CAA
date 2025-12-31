@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CELLULAR AUTOMATA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #020617;
+            color: #a855f7;
+            font-family: 'Fira Code', monospace;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+        }
+
+        #root {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        @keyframes title-sheen {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .animate-title-sheen {
+            background-size: 200% auto;
+            animation: title-sheen 6s linear infinite;
+        }
+
+        @keyframes breathing-flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        @keyframes glitch-skew {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-2deg); }
+            21% { transform: skew(5deg); }
+            22% { transform: skew(0deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(168, 85, 247, 0.01), rgba(59, 130, 246, 0.005), rgba(168, 85, 247, 0.01));
+            background-size: 100% 3px, 4px 100%;
+            pointer-events: none;
+            z-index: 100;
+            animation: breathing-flicker 8s ease-in-out infinite;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.9), 0 0 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .cyber-glitch-active {
+            animation: glitch-skew 4s infinite linear alternate-reverse;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.4);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            #global-comms-panel {
+                display: none !important;
+            }
+        }
+
+        #global-comms-panel {
+            position: fixed;
+            bottom: 64px; 
+            left: 32px;
+            width: 240px;
+            height: 120px;
+            background: transparent;
+            z-index: 5; 
+            display: flex;
+            flex-direction: column;
+            pointer-events: none; 
+        }
+
+        #comms-header {
+            padding: 4px 0;
+            font-size: 7px;
+            font-weight: bold;
+            letter-spacing: 0.3em;
+            color: rgba(168, 85, 247, 0.2);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.05);
+            text-transform: uppercase;
+        }
+
+        #messagesContainer {
+            flex: 1;
+            overflow: y-auto;
+            padding: 8px 0;
+            font-size: 7px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        }
+
+        .message {
+            padding: 1px 0;
+            line-height: 1;
+            animation: slideIn 0.8s ease-out forwards;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0.3;
+        }
+
+        .message .timestamp {
+            color: rgba(168, 85, 247, 0.15);
+            margin-right: 4px;
+        }
+
+        .message .text {
+            color: rgba(168, 85, 247, 0.4);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-5px); }
+            to { opacity: 0.3; transform: translateX(0); }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "url": "https://esm.sh/url@^0.11.4",
+    "path": "https://esm.sh/path@^0.12.7",
+    "three/": "https://esm.sh/three@^0.182.0/",
+    "three": "https://esm.sh/three@^0.182.0",
+    "gsap": "https://esm.sh/gsap@^3.14.2",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "express": "https://esm.sh/express@^5.2.1",
+    "dotenv": "https://esm.sh/dotenv@^17.2.3",
+    "axios": "https://esm.sh/axios@^1.13.2",
+    "cors": "https://esm.sh/cors@^2.8.5"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+    <div id="global-comms-panel">
+        <div id="comms-header">GHOST_SIGNAL_FEED</div>
+        <div id="messagesContainer"></div>
+    </div>
+    <div class="crt-overlay"></div>
+    <div class="noise-overlay"></div>
+
+    <script type="module" src="./index.tsx"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+             apiKey: "AIzaSyBKGnv1pyLMPCmaMq9SiA6_uBtQFgHEwyI",
+             authDomain: "dna-database-a43de.firebaseapp.com",
+             databaseURL: "https://dna-database-a43de-default-rtdb.asia-southeast1.firebasedatabase.app",
+             projectId: "dna-database-a43de",
+             storageBucket: "dna-database-a43de.firebasestorage.app",
+             messagingSenderId: "479428140792",
+             appId: "1:479428140792:web:1ff63b6c6cc7047c1aa50d",
+             measurementId: "G-GWBGEVDC5T"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.firebase = firebase;
+        window.firebaseDB = firebase.database();
+        const messagesContainer = document.getElementById('messagesContainer');
+        // Synchronized with 'genesis_logs' for permanent history
+        window.firebaseDB.ref('genesis_logs').limitToLast(10).on('child_added', (snapshot) => {
+            const data = snapshot.val();
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--';
+            const displayText = data.text || data.code || 'NO_SIGNAL';
+            messageDiv.innerHTML = `<span class="timestamp">[${time}]</span><span class="text">${displayText}</span>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            if (messagesContainer.children.length > 10) messagesContainer.removeChild(messagesContainer.firstChild);
+        });
+    </script>
+</body>
+</html>

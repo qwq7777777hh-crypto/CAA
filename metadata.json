@@ -1,0 +1,7 @@
+{
+  "name": "Copy of  CELLULAR AUTOMATA（AI大脑用户登录部署版）",
+  "description": "A futuristic high-tech interface for genetic sequence encoding, DNA database management, and spectral sonification of binary data.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
