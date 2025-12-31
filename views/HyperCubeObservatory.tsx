@@ -1,7 +1,6 @@
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import * as THREE from 'this-is-not-used'; // Three is imported via import map in index.html, but we use it globally or from esm
-import * as THREE_LIB from 'three';
+import React, { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -10,8 +9,6 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { useGeneData } from '../context/GeneContext';
 import { AppView } from '../types';
 import { playHighTechButton, playMechKey } from '../utils/audio';
-
-const THREE = THREE_LIB;
 
 // --- CONFIGURATION ---
 const GRID_SIZE = 128;
