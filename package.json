@@ -1,4 +1,3 @@
-
 {
   "name": "cellular-automata-nexus",
   "private": true,
@@ -19,7 +18,6 @@
     "framer-motion": "^11.11.17",
     "three": "0.170.0",
     "gsap": "^3.12.5",
-    "@google/generative-ai": "^0.21.0",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
