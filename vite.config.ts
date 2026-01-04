@@ -14,7 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // <--- 之前这里漏了逗号，必须加上！
+    host: true, // <--- 之前这里漏了逗号，导致部署直接失败
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
