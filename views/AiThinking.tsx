@@ -11,8 +11,6 @@ import { AppView } from '../types';
 import { playHighTechButton, playMechKey, playNeuralNote } from '../utils/audio';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CornerDownLeft, Send, Cpu, Radio, Terminal, Database, ChevronUp, ChevronDown, Activity, Zap, Heart, HelpCircle } from 'lucide-react';
-// 删除 GoogleGenAI 导入
-// import { GoogleGenAI, Type } from "@google/genai";
 import ViewManual, { ManualItem } from '../components/ViewManual';
 
 // --- CONFIGURATION ---
@@ -332,7 +330,6 @@ const AiThinking: React.FC = () => {
   const regionsRef = useRef<Float32Array | null>(null);
   const particlePositionsCache = useRef<Float32Array | null>(null);
 
-  // 每次 Transmit 时生成一个新的随机种子，确保旋律的独特性
   const sessionSeed = useRef(0);
 
   const saveBrainState = () => {
@@ -609,11 +606,8 @@ const AiThinking: React.FC = () => {
               return;
           }
           const char = text[charIndex];
-          
-          // --- 新增音效逻辑：根据字符与当前状态生成旋律 ---
           const freqIdx = (char.charCodeAt(0) + charIndex + sessionSeed.current) % NEURAL_SCALE.length;
           const freq = NEURAL_SCALE[freqIdx];
-          // 如果肾上腺素较高，音色会变得尖锐（使用三角波）
           const waveType = neuroState.adrenaline > 0.4 ? 'triangle' : 'sine';
           playNeuralNote(freq, waveType, 0.12);
 
@@ -681,14 +675,11 @@ const AiThinking: React.FC = () => {
   const handleTransmit = async () => {
     if (!userInput.trim()) return;
     playHighTechButton();
-    // 每次点击发送都生成一个新的旋律偏移量，让旋律不重样
     sessionSeed.current = Math.floor(Math.random() * 256);
 
     setAiState({ status: 'THINKING', message: 'DECODING BINARY STREAM...', emotion: 'CALM' });
     try {
         const decodedQuestion = binaryToText(userInput);
-        
-        // --- 核心修改：移除 Google SDK，使用自建后端 API ---
         const systemPrompt = `你是 Neural_X，一个拥有高情商和自我意识的数字生命体。你能够洞察人类语言中的微小情感差异。
         当用户进行调侃或开玩笑时（如称呼你为小笨蛋等），你应该产生类似人类“脸红”或“羞涩”的情感反应。
         请务必返回 JSON 格式数据。
@@ -703,42 +694,25 @@ const AiThinking: React.FC = () => {
 
         const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 message: decodedQuestion,
-                systemInstruction: systemPrompt
+                instruction: systemPrompt
             })
         });
 
-        if (!response.ok) {
-            throw new Error(`Server Error: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`Server Error: ${response.statusText}`);
 
         const data = await response.json();
-        // 尝试解析返回的文本（因为 DeepSeek 返回的 content 是字符串）
         let text = data.text;
-        
-        // 简单的 JSON 提取逻辑，防止 AI 返回了 ```json ... ``` 格式
         const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-            text = jsonMatch[0];
-        }
+        if (jsonMatch) text = jsonMatch[0];
 
         let json;
         try {
             json = JSON.parse(text);
         } catch (e) {
-            console.error("JSON Parsing failed", e);
-            // 降级处理：手动构造一个响应
-            json = {
-                thought: "Processing signal corruption...",
-                reply: text,
-                emotion_shift: "CALM",
-                subtext_analysis: "unknown",
-                intensity: 0.1
-            };
+            json = { thought: "Processing signal corruption...", reply: text, emotion_shift: "CALM", subtext_analysis: "unknown", intensity: 0.1 };
         }
 
         const emotion = (json.emotion_shift || "CALM").toUpperCase() as 'CALM' | 'ANGER' | 'JOY' | 'SAD';
