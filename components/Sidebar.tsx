@@ -34,7 +34,6 @@ const Sidebar: React.FC = () => {
     { view: AppView.GENESIS_LENIA, label: 'DNA DYNAMICS [DNA动态]', color: 'text-purple-400', border: 'border-purple-500', icon: Dna },
     { view: AppView.NEURON_MAPPING, label: 'NEURON MAPPING [神经元映射]', color: 'text-cyan-400', border: 'border-cyan-500', icon: Activity },
     { view: AppView.SLIME_LAB, label: '3D SLIME LAB [3D黏菌实验室]', color: 'text-orange-400', border: 'border-orange-500', icon: Box },
-    { view: AppView.BIO_QUANTUM, label: 'BIO-QUANTUM FIELD [生物量子流场]', color: 'text-blue-400', border: 'border-blue-500', icon: Zap },
   ];
 
   const handleNavClick = (view: AppView, freq: number) => {
