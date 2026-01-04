@@ -49,7 +49,6 @@ app.post('/api/chat', async (req, res) => {
           { role: "system", content: instruction || "You are a helpful assistant." },
           { role: "user", content: message }
         ],
-        response_format: { type: "json_object" },
         temperature: 0.8,
         max_tokens: 2048
       },
