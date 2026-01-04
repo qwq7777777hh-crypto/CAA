@@ -14,7 +14,14 @@ export default defineConfig({
     },
   },
   server: {
-    host: true
+    host: true,
+    proxy: {
+      // 本地开发时将 /api 请求代理到 server.js 运行的 3000 端口
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      }
+    }
   },
   build: {
     outDir: 'dist',

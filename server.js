@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 });
 
 // 1. API 路由：必须在静态资源托管 app.use(express.static) 之前定义
-// 确保 POST 请求不会被静态服务器拦截
+// 确保 POST 请求不会被静态服务器拦截导致 405
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, instruction } = req.body;
@@ -36,7 +36,7 @@ app.post('/api/chat', async (req, res) => {
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      console.error('SERVER ERROR: DEEPSEEK_API_KEY is missing.');
+      console.error('SERVER ERROR: DEEPSEEK_API_KEY is missing in environment variables.');
       return res.status(500).json({ error: 'Server configuration error: API Key missing' });
     }
 
@@ -49,6 +49,7 @@ app.post('/api/chat', async (req, res) => {
           { role: "system", content: instruction || "You are a helpful assistant." },
           { role: "user", content: message }
         ],
+        response_format: { type: "json_object" },
         temperature: 0.8,
         max_tokens: 2048
       },
@@ -66,7 +67,7 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (error) {
     const errorMsg = error.response?.data || error.message;
-    console.error('API Error:', JSON.stringify(errorMsg));
+    console.error('DeepSeek API Error:', JSON.stringify(errorMsg));
     res.status(500).json({ 
       error: 'Failed to communicate with AI provider',
       details: errorMsg 
@@ -86,7 +87,9 @@ app.get('*', (req, res) => {
 // 4. 启动服务器
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`--- SERVER ACTIVE ---`);
+  console.log(`--- FULLSTACK SERVER ACTIVE ---`);
+  console.log(`Runtime: Node.js ${process.version}`);
   console.log(`Port: ${PORT}`);
-  console.log(`Static Root: ${distPath}`);
+  console.log(`Static Asset Root: ${distPath}`);
+  console.log(`API Endpoint: POST /api/chat`);
 });
