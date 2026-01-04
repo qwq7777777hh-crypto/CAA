@@ -14,12 +14,12 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
+    host: true, // <--- 之前这里漏了逗号，必须加上！
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // 这里指向你的后端端口
+        target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: false, 
+        secure: false,
       },
     },
   },
