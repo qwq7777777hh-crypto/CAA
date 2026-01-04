@@ -14,7 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: true
+    host: true,
     proxy: {
       '/api': {
         target: 'http://localhost:3000', // 这里指向你的后端端口
