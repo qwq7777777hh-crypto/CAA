@@ -14,14 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // <--- 之前这里漏了逗号，导致部署直接失败
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    host: true
   },
   build: {
     outDir: 'dist',
