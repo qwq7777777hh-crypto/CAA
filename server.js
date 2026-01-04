@@ -46,7 +46,7 @@ app.post('/api/chat', async (req, res) => {
       {
         model: "deepseek-chat",
         messages: [
-          { role: "system", content: (instruction || "You are a helpful assistant.") + " Please respond in JSON format." },
+          { role: "system", content: instruction || "You are a helpful assistant." },
           { role: "user", content: message }
         ],
         response_format: { type: "json_object" },
