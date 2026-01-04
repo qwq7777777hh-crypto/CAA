@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -19,11 +18,10 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// 1. 优先托管静态资源 (Vite 构建产物)
-// 确保路径使用 path.join 以防止操作系统差异导致的错误
-app.use(express.static(path.join(__dirname, 'dist')));
-
-// API 路由：处理 AI 聊天请求
+// ==========================================
+// 1. 【核心修改】API 路由必须放在最前面
+// ==========================================
+// 只有放在静态资源托管之前，才能确保 POST 请求被正确处理，而不会报 405
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, systemInstruction } = req.body;
@@ -64,21 +62,30 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (error) {
     console.error('API Error:', error.response?.data || error.message);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to communicate with AI provider',
-      details: error.response?.data || error.message 
+      details: error.response?.data || error.message
     });
   }
 });
 
-// 2. 所有其他 GET 请求返回 index.html (SPA 前端路由支持)
-// 必须放在 API 路由之后
+// ==========================================
+// 2. 静态资源托管 (放在 API 之后)
+// ==========================================
+// 只有当请求不是 /api/chat 时，才会去 dist 文件夹找文件
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// ==========================================
+// 3. 所有其他 GET 请求返回 index.html (SPA 支持)
+// ==========================================
+// 必须放在最后，处理前端路由刷新不丢失的问题
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// 3. 启动服务器
-// 关键：必须使用 process.env.PORT，否则 Zeabur 无法绑定端口会导致崩溃
+// ==========================================
+// 4. 启动服务器
+// ==========================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
