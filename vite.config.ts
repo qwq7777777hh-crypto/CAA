@@ -15,6 +15,13 @@ export default defineConfig({
   },
   server: {
     host: true
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // 这里指向你的后端端口
+        changeOrigin: true,
+        secure: false, 
+      },
+    },
   },
   build: {
     outDir: 'dist',
