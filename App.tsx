@@ -340,11 +340,10 @@ const App: React.FC = () => {
             )}
           </AnimatePresence>
 
-          <AnimatePresence>
-            {showManual && (
-              <ProjectGenesisManual onClose={() => setShowManual(false)} />
-            )}
-          </AnimatePresence>
+{/* 移除了 AnimatePresence，确保关闭时立刻从 DOM 中移除 */}
+{showManual && (
+  <ProjectGenesisManual onClose={() => setShowManual(false)} />
+)}
         </div>
       </GeneProvider>
     </AuthProvider>
