@@ -64,7 +64,6 @@ const ProjectGenesisManual: React.FC<ManualProps> = ({ onClose }) => {
       <motion.div 
         initial={{ scale: 0.95, y: 30 }}
         animate={{ scale: 1, y: 0 }}
-        // 也就是第 66 行，改成这样：
 className="relative w-full max-w-5xl h-[80vh] bg-[#050505] border border-purple-500/30 rounded-sm flex flex-col overflow-hidden shadow-[0_0_100px_rgba(168,85,247,0.2)] pointer-events-auto"
       >
         {/* Header with scanline effect */}
