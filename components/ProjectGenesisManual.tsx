@@ -57,7 +57,7 @@ const ProjectGenesisManual: React.FC<ManualProps> = ({ onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden pointer-events-auto"
+      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden pointer-events-none"
     >
       <div className="absolute inset-0 bg-black/95 backdrop-blur-2xl" onClick={onClose} />
 
