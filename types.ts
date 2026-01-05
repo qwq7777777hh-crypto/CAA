@@ -6,6 +6,7 @@ export interface GeneEntry {
   binaryStream: string;
   visualHash?: string;
   userId?: string;
+  mood?: string; // 新增情绪字段
 }
 
 export interface ThoughtEntry {
@@ -14,13 +15,14 @@ export interface ThoughtEntry {
   question: string;
   responseBinary: string;
   userId?: string;
+  mood?: string; // 新增情绪字段
 }
 
 export enum AppView {
   ENCODING = 'ENCODING',
   DATABASE = 'DATABASE',
   THOUGHT_DB = 'THOUGHT_DB',
-  MIXER = 'MIXER', // 新增：数据混音器
+  MIXER = 'MIXER',
   SPECTRAL = 'SPECTRAL',
   GENESIS = 'GENESIS',
   GENESIS_LENIA = 'GENESIS_LENIA',

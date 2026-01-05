@@ -1,10 +1,17 @@
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HUDFrame from '../components/HUDFrame';
 import { useGeneData } from '../context/GeneContext';
 import { AppView, GeneEntry } from '../types';
 import { playHighTechButton, playMechKey } from '../utils/audio';
+import { Brain, Smile, Frown, Flame } from 'lucide-react';
+
+const MOOD_META: Record<string, { icon: any, color: string, bg: string, label: string }> = {
+  'RATIONAL': { icon: Brain, color: 'text-purple-400', bg: 'bg-purple-500/10', label: '理智' },
+  'JOY': { icon: Smile, color: 'text-cyan-400', bg: 'bg-cyan-500/10', label: '愉悦' },
+  'SADNESS': { icon: Frown, color: 'text-blue-400', bg: 'bg-blue-500/10', label: '伤心' },
+  'ANGER': { icon: Flame, color: 'text-red-400', bg: 'bg-red-500/10', label: '愤怒' },
+};
 
 const DnaDatabase: React.FC = () => {
   const { entries, setView, selectedGene, setSelectedGene } = useGeneData();
@@ -32,7 +39,6 @@ const DnaDatabase: React.FC = () => {
       className="md:translate-x-12"
     >
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-        {/* --- Top Controls --- */}
         <div className="flex justify-between items-center mb-2 md:mb-4 px-1 shrink-0">
           <div className="flex items-center space-x-2 md:space-x-4">
              <div className="relative group">
@@ -51,7 +57,6 @@ const DnaDatabase: React.FC = () => {
           </div>
         </div>
 
-        {/* --- Thinking Button (Absolute Positioned for Dramatic Effect) --- */}
         <div className="absolute top-0 right-0 z-20 pointer-events-none md:pointer-events-auto">
            <AnimatePresence>
              {selectedGene && (
@@ -73,15 +78,12 @@ const DnaDatabase: React.FC = () => {
            </AnimatePresence>
         </div>
 
-        {/* --- Table Header --- */}
         <div className="flex text-[8px] md:text-[9px] text-purple-500 font-bold uppercase tracking-widest border-b border-purple-900/50 pb-2 mb-2 px-2 shrink-0">
            <div className="w-16 md:w-24 shrink-0 border-l-2 border-purple-500/50 pl-2">Time</div>
-           {/* Source now displays Text, so we make it wider and visible */}
            <div className="w-24 md:w-48 shrink-0 pl-2">Source [文字]</div>
            <div className="flex-1 pl-4">Data Content [代码]</div>
         </div>
 
-        {/* --- Table Content --- */}
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 custom-thin-scrollbar relative">
            {entries.length === 0 ? (
               <div className="text-center text-purple-900/50 mt-12 text-[10px] uppercase tracking-widest font-mono">
@@ -91,6 +93,9 @@ const DnaDatabase: React.FC = () => {
               <div className="space-y-1">
                  {entries.map((entry) => {
                    const isSelected = selectedGene?.id === entry.id;
+                   const mood = MOOD_META[entry.mood || 'RATIONAL'];
+                   const MoodIcon = mood.icon;
+                   
                    return (
                      <motion.div 
                         key={entry.id}
@@ -104,7 +109,6 @@ const DnaDatabase: React.FC = () => {
                           }
                         `}
                      >
-                        {/* Glow Bar for Selected */}
                         {isSelected && (
                           <motion.div 
                             layoutId="selection-glow"
@@ -112,15 +116,18 @@ const DnaDatabase: React.FC = () => {
                           />
                         )}
 
-                        {/* Time */}
                         <div className="w-16 md:w-24 shrink-0 opacity-70 group-hover:opacity-100 pl-2">{entry.timestamp}</div>
                         
-                        {/* Source (Original Text) - Displayed prominently with wrap */}
-                        <div className="w-24 md:w-48 shrink-0 pl-2 font-bold text-white/90 whitespace-normal break-words pr-2">
-                           {entry.originalText}
+                        <div className="w-24 md:w-48 shrink-0 pl-2 font-bold text-white/90 whitespace-normal break-words pr-2 flex flex-col space-y-1.5">
+                           <div className="flex items-center space-x-1.5">
+                              <div className={`px-1.5 py-0.5 ${mood.bg} border border-${mood.color.replace('text-', '')}/20 rounded-[2px] flex items-center space-x-1`}>
+                                 <MoodIcon size={8} className={mood.color} />
+                                 <span className={`text-[7px] font-black tracking-tighter uppercase ${mood.color}`}>{mood.label}</span>
+                              </div>
+                           </div>
+                           <span>{entry.originalText}</span>
                         </div>
                         
-                        {/* Data Content (Binary Stream) - Matrix style */}
                         <div className={`flex-1 break-all tracking-tight opacity-70 group-hover:opacity-100 ${isSelected ? 'text-cyan-200 text-glow' : 'text-purple-500/60'}`}>
                            {entry.binaryStream}
                         </div>
@@ -131,7 +138,6 @@ const DnaDatabase: React.FC = () => {
            )}
         </div>
 
-        {/* --- Footer Status --- */}
         <div className="mt-2 pt-2 border-t border-purple-900/30 flex justify-between items-center text-[8px] text-purple-800 font-mono uppercase tracking-wider shrink-0">
            <span>NODES: {entries.length}</span>
            <div className="flex items-center space-x-2">
@@ -144,8 +150,8 @@ const DnaDatabase: React.FC = () => {
       <style>{`
         .custom-thin-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-thin-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        .custom-thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.2); border-radius: 2px; }
-        .custom-thin-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.4); }
+        .custom-thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.2); border-radius: 2px; }
+        .custom-thin-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(168, 85, 247, 0.4); }
         @keyframes scan {
           0% { transform: translateX(-100%) skewX(-15deg); }
           100% { transform: translateX(200%) skewX(-15deg); }

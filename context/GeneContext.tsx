@@ -5,8 +5,8 @@ import { GeneEntry, ThoughtEntry, AppView } from '../types';
 interface GeneContextType {
   entries: GeneEntry[];
   thoughtEntries: ThoughtEntry[];
-  addEntry: (text: string, userId?: string) => void;
-  addThoughtEntry: (question: string, responseBinary: string, userId?: string) => void;
+  addEntry: (text: string, userId?: string, mood?: string) => void;
+  addThoughtEntry: (question: string, responseBinary: string, userId?: string, mood?: string) => void;
   currentView: AppView;
   setView: (view: AppView) => void;
   isGlobalPlaying: boolean;
@@ -81,7 +81,8 @@ export const GeneProvider: React.FC<{ children: React.ReactNode }> = ({ children
           originalText: value.text || value.code || "",
           binaryStream: textToBinary(value.text || value.code || ""),
           visualHash: value.visual_hash,
-          userId: value.user_id // 确保解析出 UID
+          userId: value.user_id,
+          mood: value.mood || 'RATIONAL' // 加载情绪
         })).reverse();
         setEntries(globalEntries);
       }
@@ -97,7 +98,8 @@ export const GeneProvider: React.FC<{ children: React.ReactNode }> = ({ children
           timestamp: new Date(value.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
           question: value.question || "",
           responseBinary: value.response_binary || "",
-          userId: value.user_id // 新增：解析出 UID
+          userId: value.user_id,
+          mood: value.mood || 'RATIONAL' // 加载情绪
         })).reverse();
         setThoughtEntries(globalThoughts);
       }
@@ -110,7 +112,7 @@ export const GeneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const addEntry = (text: string, userId?: string) => {
+  const addEntry = (text: string, userId?: string, mood: string = 'RATIONAL') => {
     if (!window.firebaseDB || !window.firebase) return;
     const logsRef = window.firebaseDB.ref('genesis_logs');
     const visualHash = computeVisualHash(text);
@@ -119,12 +121,13 @@ export const GeneProvider: React.FC<{ children: React.ReactNode }> = ({ children
       text: text, 
       code: text, 
       timestamp: window.firebase.database.ServerValue.TIMESTAMP,
-      user_id: userId || 'anonymous', // 绑定当前用户 UID
-      visual_hash: visualHash
+      user_id: userId || 'anonymous',
+      visual_hash: visualHash,
+      mood: mood // 存储情绪
     });
   };
 
-  const addThoughtEntry = (question: string, responseBinary: string, userId?: string) => {
+  const addThoughtEntry = (question: string, responseBinary: string, userId?: string, mood: string = 'RATIONAL') => {
     if (!window.firebaseDB || !window.firebase) return;
     const thoughtsRef = window.firebaseDB.ref('thought_logs');
     
@@ -132,7 +135,8 @@ export const GeneProvider: React.FC<{ children: React.ReactNode }> = ({ children
       question: question,
       response_binary: responseBinary,
       timestamp: window.firebase.database.ServerValue.TIMESTAMP,
-      user_id: userId || 'anonymous' // 绑定当前用户 UID
+      user_id: userId || 'anonymous',
+      mood: mood // 存储情绪
     });
   };
 
