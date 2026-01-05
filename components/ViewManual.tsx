@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -65,7 +64,7 @@ const ViewManual: React.FC<ViewManualProps> = ({ title, subtitle, items, theme, 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden"
+      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden pointer-events-auto"
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
 

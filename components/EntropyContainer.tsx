@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playMechKey, playHighTechButton } from '../utils/audio';
+import { X } from 'lucide-react';
 
 const COLS = 10;
 const ROWS = 20;
@@ -299,19 +299,24 @@ const EntropyContainer: React.FC<Props> = ({ onClose }) => {
          <div className="w-full h-full opacity-10" style={{ backgroundImage: 'linear-gradient(rgba(168, 85, 247, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.2) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
       </div>
 
+      {/* --- EXIT BUTTON --- */}
+      {!isGameOver && (
+        <button 
+          onClick={() => { playMechKey(); onClose(); }}
+          className="absolute top-4 left-4 md:top-8 md:left-8 z-[200] flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 border border-red-500/40 bg-red-500/5 text-red-400 hover:bg-red-500/20 hover:text-white hover:border-red-500 transition-all group shadow-[0_0_15px_rgba(239,68,68,0.1)] pointer-events-auto"
+        >
+          <X size={14} className="md:w-4 md:h-4" />
+          <span className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em]">Exit_Recycle</span>
+        </button>
+      )}
+
       {/* Floating HUD - Visible on Mobile AND iPad Portrait */}
       {!isGameOver && (
         <div className="ipad-portrait-hud md:hidden absolute top-0 left-0 w-full z-[100] px-4 pt-6 flex justify-between items-start pointer-events-none">
-          <div className="bg-black/60 backdrop-blur-md border border-cyan-500/20 px-3 py-2 rounded-sm">
+          <div className="bg-black/60 backdrop-blur-md border border-cyan-500/20 px-3 py-2 rounded-sm ml-auto">
              <span className="text-[7px] text-cyan-500/60 block font-bold uppercase tracking-widest mb-1">Recycled_Entropy</span>
              <div className="text-lg font-black text-cyan-400 tabular-nums leading-none">
                 {score.toString().padStart(6, '0')}
-             </div>
-          </div>
-          <div className="bg-black/60 backdrop-blur-md border border-purple-500/20 px-3 py-2 rounded-sm text-right">
-             <span className="text-[7px] text-purple-500/60 block font-bold uppercase tracking-widest mb-1">Status</span>
-             <div className="text-[9px] font-black text-purple-400 leading-none uppercase">
-                {score > 8000 ? 'STABILIZED' : 'ANALYZING'}
              </div>
           </div>
         </div>

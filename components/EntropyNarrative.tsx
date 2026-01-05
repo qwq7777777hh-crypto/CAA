@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,8 +26,8 @@ const EntropyNarrative: React.FC<Props> = ({ onStart, onCancel }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} 
-      className="fixed inset-0 z-[11000] bg-[#020617]/95 flex items-center justify-center p-4 md:p-6 font-mono"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[11000] bg-[#020617]/95 flex items-center justify-center p-4 md:p-6 font-mono pointer-events-auto"
     >
       <div className="w-full max-w-2xl border border-cyan-500/40 bg-black/80 backdrop-blur-md p-5 md:p-12 relative overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] mx-2">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-500/50" />

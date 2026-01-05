@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HUDFrame from '../components/HUDFrame';
@@ -258,7 +257,7 @@ const GlobalForum: React.FC = () => {
       {/* 用户资料卡 - Inspect Card */}
       <AnimatePresence>
         {inspectUser && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 pointer-events-auto">
                 <motion.div initial={{ scale: 0.9, y: 10 }} animate={{ scale: 1, y: 0 }} className="w-full max-w-sm bg-[#080808] border-2 border-amber-500/40 p-0 shadow-[0_0_50px_rgba(245,158,11,0.2)] overflow-hidden">
                     <div className="bg-amber-500/10 p-4 border-b border-amber-500/30 flex justify-between items-center relative">
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
