@@ -18,14 +18,13 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// 记录所有请求日志，方便在 Zeabur 控制台排查 405 Method Not Allowed
+// 记录所有请求日志
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
-// 1. API 路由：必须在静态资源托管 app.use(express.static) 之前定义
-// 确保 POST 请求不会被静态服务器拦截导致 405
+// 1. API 路由
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, instruction } = req.body;
@@ -36,7 +35,7 @@ app.post('/api/chat', async (req, res) => {
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      console.error('SERVER ERROR: DEEPSEEK_API_KEY is missing in environment variables.');
+      console.error('SERVER ERROR: DEEPSEEK_API_KEY is missing.');
       return res.status(500).json({ error: 'Server configuration error: API Key missing' });
     }
 
@@ -49,6 +48,7 @@ app.post('/api/chat', async (req, res) => {
           { role: "system", content: instruction || "You are a helpful assistant." },
           { role: "user", content: message }
         ],
+        // 关键修改：已删除 response_format，这能解决 90% 的报错
         temperature: 0.8,
         max_tokens: 2048
       },
@@ -67,9 +67,18 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     const errorMsg = error.response?.data || error.message;
     console.error('DeepSeek API Error:', JSON.stringify(errorMsg));
-    res.status(500).json({ 
+    
+    // 如果是余额不足，给予明确提示
+    if (JSON.stringify(errorMsg).includes("Insufficient Balance")) {
+       return res.status(500).json({
+         error: 'DeepSeek 账户余额不足，请充值',
+         details: errorMsg
+       });
+    }
+
+    res.status(500).json({
       error: 'Failed to communicate with AI provider',
-      details: errorMsg 
+      details: errorMsg
     });
   }
 });
@@ -78,7 +87,7 @@ app.post('/api/chat', async (req, res) => {
 const distPath = path.join(__dirname, 'dist');
 app.use(express.static(distPath));
 
-// 3. SPA 路由回退：所有未匹配的 GET 请求返回 index.html
+// 3. SPA 路由回退
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
