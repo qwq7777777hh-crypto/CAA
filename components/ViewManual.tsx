@@ -64,7 +64,7 @@ const ViewManual: React.FC<ViewManualProps> = ({ title, subtitle, items, theme, 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden pointer-events-auto"
+      className="fixed inset-0 z-[20000] flex items-center justify-center p-4 md:p-12 font-mono overflow-hidden pointer-events-none"
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
 
@@ -72,7 +72,7 @@ const ViewManual: React.FC<ViewManualProps> = ({ title, subtitle, items, theme, 
         initial={{ scale: 0.95, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 30, opacity: 0 }}
-        className={`relative w-full max-w-5xl h-[80vh] bg-[#050505] border ${colors.border} rounded-sm flex flex-col overflow-hidden ${colors.shadow}`}
+        className={`relative w-full max-w-5xl h-[80vh] bg-[#050505] border ${colors.border} rounded-sm flex flex-col overflow-hidden ${colors.shadow} pointer-events-auto`}
       >
         {/* Header */}
         <div className={`flex justify-between items-center p-6 border-b ${colors.border} bg-opacity-10 z-20 relative overflow-hidden`}>
